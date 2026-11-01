@@ -1,0 +1,6 @@
+{
+  "name": "A Letter For You",
+  "description": "An intimate, luxury digital love letter and emotional interactive journey created with heartfelt prose, bespoke motion, and timeless elegance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
