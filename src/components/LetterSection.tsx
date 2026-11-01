@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Heart, Sparkles, BookOpen, Check } from 'lucide-react';
 import { LETTER_CONTENT_PARAGRAPHS, estimateReadingTimeMinutes } from '../utils/loveLetterData';
+import luxuryParchment from '../assets/images/luxury_parchment_texture_1793521570220.jpg';
+import romanticWaxSeal from '../assets/images/romantic_wax_seal_1793521570967.jpg';
 
 export function LetterSection() {
   const [isOpen, setIsOpen] = useState(true);
@@ -56,7 +58,7 @@ export function LetterSection() {
           {/* Subtle luxury parchment texture background */}
           <div className="absolute inset-0 z-0 opacity-40 mix-blend-multiply pointer-events-none">
             <img
-              src="/src/assets/images/luxury_parchment_texture_1793521570220.jpg"
+              src={luxuryParchment}
               alt="Luxury paper texture"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
@@ -77,7 +79,7 @@ export function LetterSection() {
             >
               <div className="relative w-20 h-20 rounded-full overflow-hidden shadow-md shadow-[#E6B8A2]/50 group-hover:scale-105 group-hover:shadow-lg transition-transform duration-300">
                 <img
-                  src="/src/assets/images/romantic_wax_seal_1793521570967.jpg"
+                  src={romanticWaxSeal}
                   alt="Rose Gold Wax Seal"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { ChevronDown, Sparkles } from 'lucide-react';
+import celestialBackdrop from '../assets/images/celestial_starlit_backdrop_1793521571003.jpg';
 
 interface HeroSectionProps {
   onBeginClick: () => void;
@@ -102,7 +103,7 @@ export function HeroSection({ onBeginClick }: HeroSectionProps) {
       {/* Background starlit cinematic artwork */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/src/assets/images/celestial_starlit_backdrop_1793521571003.jpg"
+          src={celestialBackdrop}
           alt="Atmospheric celestial night sky backdrop"
           className="w-full h-full object-cover object-center filter brightness-[0.88] contrast-[1.05]"
           referrerPolicy="no-referrer"
