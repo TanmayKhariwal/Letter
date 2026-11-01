@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Heart, Sparkles, X, Bookmark, BookmarkCheck } from 'lucide-react';
+import { useDialogFocus } from './useDialogFocus';
 import { THINGS_I_LOVE, LoveCard } from '../utils/loveLetterData';
 
 interface ThingsILoveSectionProps {
@@ -11,17 +12,7 @@ interface ThingsILoveSectionProps {
 export function ThingsILoveSection({ savedCards, onToggleSaveCard }: ThingsILoveSectionProps) {
   const [selectedCard, setSelectedCard] = useState<LoveCard | null>(null);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setSelectedCard(null);
-      }
-    };
-    if (selectedCard) {
-      window.addEventListener('keydown', handleKeyDown);
-    }
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCard]);
+  const dialogRef = useDialogFocus(!!selectedCard, () => setSelectedCard(null));
 
   const handleCardClick = (card: LoveCard) => {
     setSelectedCard(card);
@@ -126,17 +117,19 @@ export function ThingsILoveSection({ savedCards, onToggleSaveCard }: ThingsILove
       <AnimatePresence>
         {selectedCard && (
           <div
+            ref={dialogRef}
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-card-title"
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain bg-black/40 backdrop-blur-sm"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-lg bg-[#FFFDFB] rounded-3xl p-8 sm:p-10 shadow-2xl border border-[#E6B8A2]/50 text-[#2A2A2A] overflow-hidden"
+              className="relative w-full max-w-lg bg-[#FFFDFB] rounded-3xl p-8 sm:p-10 shadow-2xl border border-[#E6B8A2]/50 text-[#2A2A2A] max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain"
             >
               {/* Soft interior background glow */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-radial from-[#FFC6D9]/30 to-transparent pointer-events-none" />
@@ -177,7 +170,7 @@ export function ThingsILoveSection({ savedCards, onToggleSaveCard }: ThingsILove
               </p>
 
               {/* Bottom Actions */}
-              <div className="flex items-center justify-between pt-4 border-t border-[#2A2A2A]/10">
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#2A2A2A]/10">
                 <button
                   onClick={() => onToggleSaveCard(selectedCard.id)}
                   className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-sans-luxury font-medium rounded-full transition-colors ${

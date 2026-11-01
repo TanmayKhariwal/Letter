@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useDialogFocus } from './useDialogFocus';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Heart, Trash2 } from 'lucide-react';
 import { THINGS_I_LOVE } from '../utils/loveLetterData';
@@ -20,17 +20,7 @@ export function KeepsakesDrawer({
 }: KeepsakesDrawerProps) {
   const savedCards = THINGS_I_LOVE.filter(c => savedCardIds.includes(c.id));
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-    }
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  const dialogRef = useDialogFocus(isOpen, onClose);
 
   return (
     <AnimatePresence>
@@ -46,7 +36,12 @@ export function KeepsakesDrawer({
           />
 
           {/* Drawer Pane */}
-          <motion.aside
+          <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="keepsakes-title"
+            tabIndex={-1}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -54,10 +49,10 @@ export function KeepsakesDrawer({
             className="relative w-full max-w-md bg-[#FFFDFB] h-full shadow-2xl border-l border-[#E6B8A2]/30 flex flex-col z-10 text-[#2A2A2A]"
           >
             {/* Header */}
-            <div className="p-6 border-b border-[#2A2A2A]/10 flex items-center justify-between">
+            <div className="shrink-0 p-6 border-b border-[#2A2A2A]/10 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Heart className="w-5 h-5 fill-[#FFC6D9] text-[#FFC6D9]" />
-                <h3 className="font-serif-luxury text-xl font-semibold">
+                <h3 id="keepsakes-title" className="font-serif-luxury text-xl font-semibold">
                   Saved Keepsakes ({savedCards.length})
                 </h3>
               </div>
@@ -72,7 +67,7 @@ export function KeepsakesDrawer({
             </div>
 
             {/* List */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-6 space-y-4">
               {savedCards.length === 0 ? (
                 <div className="text-center py-12 text-[#2A2A2A]/50 font-sans-luxury text-sm">
                   <Heart className="w-8 h-8 mx-auto mb-3 text-[#2A2A2A]/20" />
@@ -112,7 +107,7 @@ export function KeepsakesDrawer({
 
             {/* Footer */}
             {savedCards.length > 0 && (
-              <div className="p-6 border-t border-[#2A2A2A]/10 flex items-center justify-between">
+              <div className="shrink-0 p-6 border-t border-[#2A2A2A]/10 flex items-center justify-between">
                 <button
                   onClick={onClearAll}
                   className="text-xs font-sans-luxury text-[#2A2A2A]/50 hover:text-red-600 transition-colors"
@@ -127,7 +122,7 @@ export function KeepsakesDrawer({
                 </button>
               </div>
             )}
-          </motion.aside>
+          </motion.div>
         </div>
       )}
     </AnimatePresence>

@@ -25,7 +25,7 @@ export function Navbar({
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-[#FFF9F5]/90 backdrop-blur-md border-b border-[#2A2A2A]/5 transition-all duration-300">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3 sm:gap-8">
         {/* Zone 1: Single text element wordmark */}
         <a
           href="#hero"
@@ -68,7 +68,7 @@ export function Navbar({
           </button>
 
           {/* Keepsakes Saved Drawer Toggle */}
-          {savedCount > 0 && (
+          {(
             <button
               onClick={onOpenKeepsakes}
               className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-sans-luxury font-medium text-[#2A2A2A] bg-white border border-[#E6B8A2] rounded-full shadow-xs hover:bg-[#FFF9F5] transition-colors"
@@ -85,6 +85,8 @@ export function Navbar({
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-1.5 rounded-full hover:bg-black/5 text-[#2A2A2A] transition-colors"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -93,7 +95,7 @@ export function Navbar({
 
       {/* Mobile Dropdown Menu Sheet */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-[#2A2A2A]/5 bg-[#FFFDFB]/95 backdrop-blur-md px-6 py-4 flex flex-col gap-3 shadow-lg">
+        <div id="mobile-navigation" className="md:hidden border-t border-[#2A2A2A]/5 bg-[#FFFDFB]/95 backdrop-blur-md px-6 py-4 flex flex-col gap-3 shadow-lg">
           {navLinks.map((link) => (
             <a
               key={link.href}

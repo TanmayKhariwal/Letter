@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Heart, Sparkles, BookOpen, Check } from 'lucide-react';
 import { LETTER_CONTENT_PARAGRAPHS, estimateReadingTimeMinutes } from '../utils/loveLetterData';
@@ -8,16 +8,29 @@ import romanticWaxSeal from '../assets/images/romantic_wax_seal_1793521570967.jp
 export function LetterSection() {
   const [isOpen, setIsOpen] = useState(true);
   const [hasCopied, setHasCopied] = useState(false);
+  const [copyError, setCopyError] = useState('');
+  const [isCopying, setIsCopying] = useState(false);
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (copyTimer.current) clearTimeout(copyTimer.current); }, []);
   const readingTime = estimateReadingTimeMinutes();
 
   const handleToggleOpen = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleCopyLetter = () => {
-    navigator.clipboard.writeText(LETTER_CONTENT_PARAGRAPHS.join('\n\n'));
-    setHasCopied(true);
-    setTimeout(() => setHasCopied(false), 2400);
+  const handleCopyLetter = async () => {
+    setCopyError('');
+    setHasCopied(false);
+    setIsCopying(true);
+    if (copyTimer.current) clearTimeout(copyTimer.current);
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(LETTER_CONTENT_PARAGRAPHS.join('\n\n'));
+      setHasCopied(true);
+      copyTimer.current = setTimeout(() => setHasCopied(false), 2400);
+    } catch {
+      setCopyError('Could not copy. Please select the letter text and copy it manually.');
+    } finally { setIsCopying(false); }
   };
 
   return (
@@ -173,9 +186,10 @@ export function LetterSection() {
                     <span>Cherished keepsake note</span>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col items-start gap-3">
                     <button
                       onClick={handleCopyLetter}
+                      disabled={isCopying}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#2A2A2A]/15 hover:border-[#2A2A2A]/30 text-[#2A2A2A] transition-colors"
                       aria-label="Save or copy letter text"
                     >
@@ -187,10 +201,13 @@ export function LetterSection() {
                       ) : (
                         <>
                           <BookOpen className="w-3.5 h-3.5" />
-                          <span>Keep a Copy</span>
+                          <span>{isCopying ? 'Copying…' : 'Keep a Copy'}</span>
                         </>
                       )}
                     </button>
+                    <p role="status" aria-live="polite" className="max-w-xs text-xs text-[#2A2A2A]/80">
+                      {copyError || (hasCopied ? 'Letter copied successfully.' : '')}
+                    </p>
                   </div>
                 </div>
               </motion.div>
