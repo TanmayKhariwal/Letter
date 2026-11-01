@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { IntroLoader } from './components/IntroLoader';
 import { Navbar } from './components/Navbar';
 import { HeartCursorTrail } from './components/HeartCursorTrail';
@@ -13,13 +13,29 @@ import { ThingsILoveSection } from './components/ThingsILoveSection';
 import { LittleThingsSection } from './components/LittleThingsSection';
 import { FavoritePlaceSection } from './components/FavoritePlaceSection';
 import { FinalMessageSection } from './components/FinalMessageSection';
+import { THINGS_I_LOVE } from './utils/loveLetterData';
 import { KeepsakesDrawer } from './components/KeepsakesDrawer';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [cursorTrailEnabled, setCursorTrailEnabled] = useState(true);
-  const [savedCardIds, setSavedCardIds] = useState<string[]>(['smile', 'heart']);
+  const [savedCardIds, setSavedCardIds] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem('letter-keepsakes-v1');
+      if (stored !== null) {
+        const parsed: unknown = JSON.parse(stored);
+        if (Array.isArray(parsed)) return [...new Set(parsed.filter((id): id is string =>
+          typeof id === 'string' && THINGS_I_LOVE.some(card => card.id === id)))];
+      }
+    } catch { /* Storage may be unavailable or contain invalid JSON. */ }
+    return ['smile', 'heart'];
+  });
   const [isKeepsakesOpen, setIsKeepsakesOpen] = useState(false);
+
+  useEffect(() => {
+    try { localStorage.setItem('letter-keepsakes-v1', JSON.stringify(savedCardIds)); }
+    catch { /* Keep session saving functional when browser storage is blocked. */ }
+  }, [savedCardIds]);
 
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);

@@ -84,3 +84,11 @@
 .animate-float-gentle {
   animation: floatGentle 6s ease-in-out infinite;
 }
+
+/* Reliable finger-sized targets, including icon-only header and dialog controls. */
+@layer base {
+  button { min-width: 44px; min-height: 44px; }
+  @media (max-width: 767px) {
+    header a { min-height: 44px; display: flex; align-items: center; }
+  }
+}
